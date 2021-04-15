@@ -3,7 +3,20 @@
 #include "process.h"
 #include <unistd.h>
 
-
+pid_t* childs;
+int childsnumber;
+void send_sigabrt(int sig)
+{
+    pid_t currchild;
+    for(int i = 0;i<childsnumber;i++)
+    {
+        currchild = childs[i];
+        if(currchild > 0)
+        {
+        kill(currchild,SIGABRT);
+        }
+    }
+}
 void execute_process(char*** lines, int process)
 {
     clock_t start, end;
@@ -32,13 +45,15 @@ void execute_process(char*** lines, int process)
     else if (*lines[process][0] == 'M' || *lines[process][0] == 'R')
     {
         int timeout = atoi(lines[process][1]);
-        int childsnumber = atoi(lines[process][2]);
+        childsnumber = atoi(lines[process][2]);
+        childs = calloc(childsnumber,sizeof(pid_t));
         alarm(timeout);
         if (childsnumber>0)
         {
             for (int i = 0;i<childsnumber;i++)
             {
                 pid_t child_pid = fork();
+
                 if (child_pid == 0)
                 {
                     int childindex = atoi(lines[process][i + 3]);
@@ -46,7 +61,13 @@ void execute_process(char*** lines, int process)
                 }
                 else if (child_pid != 0)
                 {
-                    //Codigo padre
+                    signal(SIGALARM, send_sigabrt);
+                    signal(SIGABRT,send_sigabrt);
+                    if (*lines[process][0] == 'R')
+                    {
+                        signal(SIGINT, send_sigabrt);
+                    }
+
                 }
                 
             }

@@ -1,6 +1,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include "process.h"
+#include <unistd.h>
 
 
 void execute_process(char*** lines, int process)
@@ -28,9 +29,28 @@ void execute_process(char*** lines, int process)
         //INTERRPUTED = SI EL PROCESO FUE INTERRUMPIDO
         
     }
-    else if (lines[process][0] == 'M')
+    else if (*lines[process][0] == 'M' || *lines[process][0] == 'R')
     {
-
+        int timeout = atoi(lines[process][1]);
+        int childsnumber = atoi(lines[process][2]);
+        alarm(timeout);
+        if (childsnumber>0)
+        {
+            for (int i = 0;i<childsnumber;i++)
+            {
+                pid_t child_pid = fork();
+                if (child_pid == 0)
+                {
+                    int childindex = atoi(lines[process][i + 3]);
+                    execute_process(lines,childindex);
+                }
+                else if (child_pid != 0)
+                {
+                    //Codigo padre
+                }
+                
+            }
+        }
     }
     
 }

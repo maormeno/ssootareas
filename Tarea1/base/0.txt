@@ -1,1 +1,1 @@
-./hello_world, 0.012149, 42, 0
+./hello_world, 10, 42, 0

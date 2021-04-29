@@ -13,6 +13,7 @@ int main(int argc, char **argv)
   int Q = atoi(argv[2]);
   int q = atoi(argv[3]);
   int S = atoi(argv[4]);
+  int processes_number = input_file->len;
   //Crear y llenar lista de Queues
   Queue* queueslist[Q];
   for (int i = 0;i<Q;i++)
@@ -24,11 +25,11 @@ int main(int argc, char **argv)
   }
   Process *processes[input_file->len];
   read_input(input_file, processes);
-  ticks += 3;
+  Process* running_process = NULL;
   while (ticks>=0)
   {
-    process_to_sistem(input_file, ticks, queueslist, processes);
-    //printf("%i",queueslist[0]->processes[0]->pid);
+    process_to_sistem(Q, ticks, queueslist, processes);
+    cpu(int ticks, Queue* queueslist[], Process *processes[], Process* running_process,int Q, int processes_number);
     ticks = -1;
   }
   input_file_destroy(input_file);

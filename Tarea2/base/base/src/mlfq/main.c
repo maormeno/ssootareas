@@ -8,14 +8,15 @@
 
 int main(int argc, char **argv)
 {
-  int ticks = 0;
-  InputFile* input_file = read_file(argv[1]);
-  int Q = atoi(argv[2]);
-  int q = atoi(argv[3]);
-  int S = atoi(argv[4]);
-  int processes_number = input_file->len;
+
+  input_file = read_file(argv[1]);
+  Q = atoi(argv[2]);
+  q = atoi(argv[3]);
+  S = atoi(argv[4]);
+  processes_number = input_file->len;
+  ticks = 0;
   //Crear y llenar lista de Queues
-  Queue* queueslist[Q];
+  queueslist = calloc(Q, sizeof(Queue*));
   for (int i = 0;i<Q;i++)
   {
     Queue* queue = QueueInit(Q,q);
@@ -23,15 +24,17 @@ int main(int argc, char **argv)
     queue->quantum = (Q-queue->pi)*q;
     queueslist[i] = queue;
   }
-  Process *processes[input_file->len];
-  read_input(input_file, processes);
-  Process* running_process = NULL;
+  processes = calloc(input_file->len,sizeof(Process*));
+  read_input();
+  running_process = NULL;
+  ticks+=4;
   while (ticks>=0)
   {
-    process_to_sistem(Q, ticks, queueslist, processes);
-    cpu(int ticks, Queue* queueslist[], Process *processes[], Process* running_process,int Q, int processes_number);
+    process_to_sistem();
+    //cpu();
     ticks = -1;
   }
+
   input_file_destroy(input_file);
 }
 

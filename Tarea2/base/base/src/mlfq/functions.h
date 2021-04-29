@@ -3,7 +3,6 @@
 #include "../file_manager/manager.h"
 
 
-
 typedef struct Process {
   int pid;
   int p;
@@ -20,13 +19,25 @@ typedef struct Process {
 typedef struct Queue{
   int pi;
   int quantum;
-  Process* processes[];
+  int c;
+  Process* processes[2048];
 }Queue;
+
+  InputFile* input_file;
+  Queue** queueslist;
+  int Q ;
+  int q ;
+  int S ;
+  int processes_number;
+  int ticks;
+  Process** processes;
+  Process* running_process;
+
 
 Process* ProcessInit(char name,int pid, int tiempo_inicio, int cycles, int wait, int waiting_delay);
 Queue* QueueInit(int Q, int q);
-void read_input(InputFile* input_file, Process* processes[]);
+void read_input();
 //Funcion que encola procesos cuando llega su tiempo_inicio
-void process_to_sistem(int Q, int ticks,Queue* queueslist[], Process *processes[input_file->len]);
-void cpu(Queue* queueslist[], Process *processes[input_file->len], int Q);
-int return_pi(Queue* queueslist[],Process* running_process, int Q, int processes_number);
+void process_to_sistem();
+void cpu();
+int return_pi();

@@ -44,7 +44,7 @@ void process_to_sistem()
 {
     for (int i = 0;i<processes_number;i++)
     {
-      if (ticks >= processes[i]->tiempo_inicio)
+      if (ticks == processes[i]->tiempo_inicio)
       {
         int last = queueslist[0]->c;
         processes[i]->status = 1;
@@ -54,45 +54,104 @@ void process_to_sistem()
     }
 }
 
+
+
 void cpu()
 {
     if (running_process)
     {
-        int pi = return_pi();
+        int pi = return_pi(running_process);
         int q_index = Q -pi -1;
         running_process->cycles -= 1;
         running_process->running_time +=1;
         if (running_process->wait == running_process->running_time)
         {
-            running_process->status = 3;
+            running_process->status = 2;
+            increase_queue(running_process);
             running_process = NULL;
         }
         if (running_process->cycles == 0)
         {
-            running_process->status = 4;
+            running_process->status = 3;
+            pop_process(running_process);
             running_process = NULL;
         }
-        if (queueslist[q_index]->quantum == ticks)
+        if (queueslist[q_index]->quantum == running_process->running_time)
         {
             running_process->status = 1;
-            //Mover  a la siguiente cola
+            decrease_queue(running_process);
+            running_process = NULL;
+
         }
     }
     if (!running_process)
     {
-     int a = 0;   
+        for (int i = 0;i<Q;i++)
+        {
+            Queue* queue = queueslist[i];
+            for (int j = 0;j<queue->c, j++)
+            {
+                Process* process = queue[i].processes[j];
+                if (process->status == 1)
+                {
+                    running_process = process;
+                    process->status =0;
+                }
+            }
+        }
     }
+    waiting_processes();
 }
 
-int return_pi()
+int return_pi(Process* process)
 {
     for (int i = 0;i<Q;i++)
     {
         for (int j = 0;j<processes_number;j++)
         {
-            if (running_process == queueslist[i]->processes[j])
+            if (process == queueslist[i]->processes[j])
             {
                 return queueslist[i]->pi;
+            }
+        }
+    }
+}
+
+void increase_queue(Process* process)
+{
+    int pi = return_pi(process);
+    int q_index = Q -pi -1;
+    if (q_index > 0)
+    {
+        int last = queueslist[q_index-1]->c;
+        pop_process(process);
+        queueslist[q_index-1]->processes[last] = process;
+        queueslist[q_index-1]->c += 1;
+    }
+}
+
+void decrease_queue(Process* process)
+{
+    int pi = return_pi(process);
+    int q_index = Q -pi -1;
+    if (q_index < Q-1)
+    {
+        int last = queueslist[q_index+1]->c;
+        pop_process(process);
+        queueslist[q_index+1]->processes[last] = process;
+        queueslist[q_index+1]->c += 1;
+    }
+}
+void waiting_processes()
+{
+    for (int i = 0;i<processes_number;i++)
+    {
+        if (processes[i]->status == 2)
+        {
+            processes[i]->waiting_time += 1;
+            if (processes[i]->waiting_time == processes[i]->waiting_delay)
+            {
+                processes[i]->status = 1;
             }
         }
     }

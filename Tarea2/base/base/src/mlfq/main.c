@@ -31,7 +31,7 @@ int main(int argc, char **argv)
   while (ticks>=0)
   {
     process_to_sistem();
-    //cpu();
+    cpu();
     ticks = -1;
   }
 

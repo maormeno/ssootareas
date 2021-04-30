@@ -33,11 +33,6 @@ int main(int argc, char **argv)
   {
     process_to_sistem();
     cpu();
-    if (reset_ticks == S)
-    {
-      reset_queues();
-      reset_ticks = 0;
-      }
     ticks += 1;
     printf("%i\n\n", ticks);
     reset_ticks += 1;

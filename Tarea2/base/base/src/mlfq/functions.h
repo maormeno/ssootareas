@@ -50,4 +50,6 @@ void waiting_processes();
 void reset_queues();
 void free_mem();
 void finish();
+void review_S();
+
 

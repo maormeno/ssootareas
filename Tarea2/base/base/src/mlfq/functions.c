@@ -110,6 +110,7 @@ void cpu()
            increase_queue(running_process);
            running_process = NULL;
        }
+       review_S();
 
 
 
@@ -201,6 +202,7 @@ void waiting_processes()
 
 void reset_queues()
 {
+    printf("S ticks %i\n", ticks);
     for (int i = 1; i < Q ; i++)
     {
         for (int j = queueslist[i] -> c - 1; j >= 0; j--)
@@ -243,5 +245,13 @@ void finish()
         free_mem();
         input_file_destroy(input_file);
         exit(1);
+    }
+}
+void review_S()
+{
+    if (reset_ticks == S)
+    {
+      reset_queues();
+      reset_ticks = 0;
     }
 }

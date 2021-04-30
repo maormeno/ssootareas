@@ -19,7 +19,27 @@ Process* ProcessInit(char name,int pid, int tiempo_inicio, int cycles, int wait,
   process->cycles = cycles;
   process->status = 0;
   return process;
+}
 
+void pop_process(Process* process)
+{
+    int pi = return_pi(process);
+    int q_index = Q -pi -1;
+    Queue* queue = queueslist[q_index];
+    int index;
+    for (int i = 0; i < queue -> c; i++)
+    {
+        if (queue -> processes[i] == process){index = i;}
+    }
+    if (index < queue -> c - 1)
+    {
+        for(int i = index; i < queue -> c - 1; i++)
+        {
+            queue -> processes[i] = queue -> processes[i + 1];
+        }
+    }
+    queue -> processes[queue -> c - 1] = NULL;
+    queue -> c = queue -> c - 1:
 }
 
 
@@ -64,12 +84,12 @@ void cpu()
         running_process->running_time +=1;
         if (running_process->wait == running_process->running_time)
         {
-            running_process->status = 3;
+            running_process->status = 2;
             running_process = NULL;
         }
         if (running_process->cycles == 0)
         {
-            running_process->status = 4;
+            running_process->status = 3;
             running_process = NULL;
         }
         if (queueslist[q_index]->quantum == ticks)
@@ -84,7 +104,7 @@ void cpu()
     }
 }
 
-int return_pi()
+int return_pi(Process* process)
 {
     for (int i = 0;i<Q;i++)
     {

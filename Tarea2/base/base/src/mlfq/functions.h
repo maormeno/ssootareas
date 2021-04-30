@@ -23,21 +23,22 @@ typedef struct Queue{
   Process* processes[2048];
 }Queue;
 
-  InputFile* input_file;
-  Queue** queueslist;
-  int Q ;
-  int q ;
-  int S ;
-  int processes_number;
-  int ticks;
-  Process** processes;
-  Process* running_process;
+InputFile* input_file;
+Queue** queueslist;
+int Q ;
+int q ;
+int S ;
+int processes_number;
+int ticks;
+Process** processes;
+Process* running_process;
 
 
 Process* ProcessInit(char name,int pid, int tiempo_inicio, int cycles, int wait, int waiting_delay);
 Queue* QueueInit(int Q, int q);
+void pop_process(Process* process);
 void read_input();
 //Funcion que encola procesos cuando llega su tiempo_inicio
 void process_to_sistem();
 void cpu();
-int return_pi();
+int return_pi(Process* process);

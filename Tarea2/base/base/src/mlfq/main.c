@@ -29,7 +29,7 @@ int main(int argc, char **argv)
   running_process = NULL;
   ticks = 0;
   reset_ticks = 0;
-  while (ticks)
+  while (ticks>=0)
   {
     process_to_sistem();
     cpu();
@@ -40,8 +40,9 @@ int main(int argc, char **argv)
       }
     ticks += 1;
     reset_ticks += 1;
+    //finish();
   }
-
+  free_mem();
   input_file_destroy(input_file);
 }
 

@@ -48,3 +48,6 @@ void increase_queue(Process* process);
 void decrease_queue(Process* process);
 void waiting_processes();
 void reset_queues();
+void free_mem();
+void finish();
+

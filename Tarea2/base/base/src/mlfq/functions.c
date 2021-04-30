@@ -85,24 +85,28 @@ void cpu()
         int q_index = Q -pi -1;
         running_process->cycles -= 1;
         running_process->running_time +=1;
-        if (running_process->wait == running_process->running_time)
-        {
-            running_process->status = 2;
-            increase_queue(running_process);
-            running_process = NULL;
-        }
-        if (running_process->cycles == 0)
-        {
-            running_process->status = 3;
-            pop_process(running_process);
-            running_process = NULL;
-        }
+        
         if (queueslist[q_index]->quantum == running_process->running_time)
         {
             running_process->status = 1;
             decrease_queue(running_process);
             running_process = NULL;
         }
+        if (running_process->wait == running_process->running_time)
+        {
+            running_process->status = 2;
+            increase_queue(running_process);
+            running_process = NULL;
+        }
+
+        if (running_process->cycles == 0)
+        {
+            running_process->status = 3;
+            pop_process(running_process);
+            running_process = NULL;
+        }
+
+
     }
     if (!running_process)
     {
@@ -111,7 +115,7 @@ void cpu()
             Queue* queue = queueslist[i];
             for (int j = 0; j<queue->c; j++)
             {
-                Process* process = queue[i].processes[j];
+                Process* process = queue->processes[j];
                 if (process->status == 1)
                 {
                     running_process = process;
@@ -120,6 +124,7 @@ void cpu()
             }
         }
     }
+    finish();
 }
 
 int return_pi(Process* process)
@@ -187,5 +192,41 @@ void reset_queues()
             queueslist[0] -> c += 1;
             pop_process(queueslist[i] -> processes[j]);
         }
+    }
+}
+
+void free_mem()
+{
+  for (int i = 0; i<processes_number;i++)
+  {
+    free(processes[i]);
+
+  }
+  free(processes);
+  for (int i = 0; i<Q;i++)
+  {
+    free(queueslist[i]);
+
+  }
+  free(queueslist);
+}
+void finish()
+{
+    int cond = 0;
+    for (int i = 0;i<Q;i++)
+    {
+        Queue* queue = queueslist[i];
+        for (int j = 0;j<queue->c;j++)
+        {
+            Process* process = queue->processes[j];
+            if (process->status != 3)
+            {
+                cond = 1;
+            }
+        }
+    }
+    if (cond == 0)
+    {
+        ticks = -1;
     }
 }

@@ -14,6 +14,7 @@ typedef struct Process {
   int cycles;
   char name;
   int running_time;
+  int waiting_time;
 } Process;
 
 typedef struct Queue{
@@ -42,3 +43,5 @@ void read_input();
 void process_to_sistem();
 void cpu();
 int return_pi(Process* process);
+void increase_queue(Process* process);
+void waiting_processes();

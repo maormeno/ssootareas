@@ -70,6 +70,7 @@ void process_to_sistem()
         processes[i]->status = 1;
         queueslist[0]->processes[last] = processes[i];
         queueslist[0]->c+=1;
+        printf("añadiendo proceso %i con status %i en ticks %i\n",queueslist[0]->processes[last]->pid,queueslist[0]->processes[last]->status, ticks );
       }      
     }
 }
@@ -81,13 +82,15 @@ void cpu()
     waiting_processes();
     if (running_process)
     {
+        printf("corriendo proceso %i\n", running_process->pid);
         int pi = return_pi(running_process);
         int q_index = Q -pi -1;
         running_process->cycles -= 1;
         running_process->running_time +=1;
-        printf("Revisando proceso %i, ticks %i\n", running_process->pid, ticks);
+        //printf("Revisando proceso %i, ticks %i\n", running_process->pid, ticks);
         if (running_process->cycles == 0)
         {
+            printf("terminando proceso %i en ticks %i\n", running_process->pid, ticks);
             running_process->status = 3;
             pop_process(running_process);
             running_process = NULL;
@@ -112,16 +115,22 @@ void cpu()
     }
     if (!running_process)
     {
+        //printf("revisando si hay que correr otro proceso, rp %i\n", running_process->pid);
         for (int i = 0;i<Q;i++)
         {
             Queue* queue = queueslist[i];
+            printf("revisando cola %i\n", i);
             for (int j = 0; j<queue->c; j++)
             {
                 Process* process = queue->processes[j];
+                printf("revisando proceso %i, cuyo status es %i\n", process->pid, process->status);
                 if (process->status == 1)
                 {
                     running_process = process;
                     process->status = 0;
+                    printf("empezando a correr %i en ticks %i \n", running_process->pid, ticks);
+                    break;
+
                 }
             }
         }

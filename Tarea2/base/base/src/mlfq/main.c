@@ -39,6 +39,7 @@ int main(int argc, char **argv)
       reset_ticks = 0;
       }
     ticks += 1;
+    printf("%i\n\n", ticks);
     reset_ticks += 1;
     //finish();
   }

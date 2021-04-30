@@ -96,18 +96,20 @@ void cpu()
             running_process = NULL;
         }
 
-//       if (queueslist[q_index]->quantum == running_process->running_time)
-//       {
-//           running_process->status = 1;
-//           decrease_queue(running_process);
-//           running_process = NULL;
-//       }
-//       if (running_process->wait == running_process->running_time)
-//       {
-//           running_process->status = 2;
-//           increase_queue(running_process);
-//           running_process = NULL;
-//       }
+       if (running_process && queueslist[q_index]->quantum == running_process->running_time)
+       {
+           printf("proceso cediendo cpu por quantum\n");
+           running_process->status = 1;
+           decrease_queue(running_process);
+           running_process = NULL;
+       }
+       if (running_process && running_process !=0 &&running_process->wait == running_process->running_time)
+       {
+           printf("proceso cediendo cpu por llegar a su tiempo wait/n");
+           running_process->status = 2;
+           increase_queue(running_process);
+           running_process = NULL;
+       }
 
 
 
@@ -132,6 +134,10 @@ void cpu()
                     break;
 
                 }
+            }
+            if(running_process)
+            {
+                break;
             }
         }
     }

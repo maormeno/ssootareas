@@ -12,7 +12,7 @@ typedef struct Process {
   int waiting_delay;
   int tiempo_inicio;
   int cycles;
-  char name;
+  char* name;
   int running_time;
   int waiting_time;
 } Process;
@@ -31,11 +31,12 @@ int q ;
 int S ;
 int processes_number;
 int ticks;
+int reset_ticks;
 Process** processes;
 Process* running_process;
 
 
-Process* ProcessInit(char name,int pid, int tiempo_inicio, int cycles, int wait, int waiting_delay);
+Process* ProcessInit(char* name,int pid, int tiempo_inicio, int cycles, int wait, int waiting_delay);
 Queue* QueueInit(int Q, int q);
 void pop_process(Process* process);
 void read_input();
@@ -44,4 +45,6 @@ void process_to_sistem();
 void cpu();
 int return_pi(Process* process);
 void increase_queue(Process* process);
+void decrease_queue(Process* process);
 void waiting_processes();
+void reset_queues();

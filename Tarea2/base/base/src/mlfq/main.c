@@ -27,12 +27,19 @@ int main(int argc, char **argv)
   processes = calloc(input_file->len,sizeof(Process*));
   read_input();
   running_process = NULL;
-  ticks+=4;
-  while (ticks>=0)
+  ticks = 0;
+  reset_ticks = 0;
+  while (ticks)
   {
     process_to_sistem();
     cpu();
-    ticks = -1;
+    if (reset_ticks == S)
+    {
+      reset_queues();
+      reset_ticks = 0;
+      }
+    ticks += 1;
+    reset_ticks += 1;
   }
 
   input_file_destroy(input_file);

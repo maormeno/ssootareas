@@ -7,7 +7,7 @@
 //Revisar wait y waiting Delay
 //Revisar el status por default
 //Asignar prioridad al proceso segun la cola en la que sae encuentre (Issue)
-Process* ProcessInit(char name,int pid, int tiempo_inicio, int cycles, int wait, int waiting_delay)
+Process* ProcessInit(char* name,int pid, int tiempo_inicio, int cycles, int wait, int waiting_delay)
 {
   Process* process = calloc(1,sizeof(Process));
   process->pid = pid;
@@ -39,7 +39,7 @@ void pop_process(Process* process)
         }
     }
     queue -> processes[queue -> c - 1] = NULL;
-    queue -> c = queue -> c - 1:
+    queue -> c = queue -> c - 1;
 }
 
 
@@ -78,6 +78,7 @@ void process_to_sistem()
 
 void cpu()
 {
+    waiting_processes();
     if (running_process)
     {
         int pi = return_pi(running_process);
@@ -101,7 +102,6 @@ void cpu()
             running_process->status = 1;
             decrease_queue(running_process);
             running_process = NULL;
-
         }
     }
     if (!running_process)
@@ -109,18 +109,17 @@ void cpu()
         for (int i = 0;i<Q;i++)
         {
             Queue* queue = queueslist[i];
-            for (int j = 0;j<queue->c, j++)
+            for (int j = 0; j<queue->c; j++)
             {
                 Process* process = queue[i].processes[j];
                 if (process->status == 1)
                 {
                     running_process = process;
-                    process->status =0;
+                    process->status = 0;
                 }
             }
         }
     }
-    waiting_processes();
 }
 
 int return_pi(Process* process)
@@ -135,6 +134,7 @@ int return_pi(Process* process)
             }
         }
     }
+    return 0;
 }
 
 void increase_queue(Process* process)
@@ -173,6 +173,19 @@ void waiting_processes()
             {
                 processes[i]->status = 1;
             }
+        }
+    }
+}
+
+void reset_queues()
+{
+    for (int i = 1; i < Q ; i++)
+    {
+        for (int j = queueslist[i] -> c - 1; j >= 0; j--)
+        {
+            queueslist[0] -> processes[queueslist[0] -> c] = queueslist[i] -> processes[j];
+            queueslist[0] -> c += 1;
+            pop_process(queueslist[i] -> processes[j]);
         }
     }
 }

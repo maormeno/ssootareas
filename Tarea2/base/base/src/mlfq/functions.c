@@ -85,26 +85,28 @@ void cpu()
         int q_index = Q -pi -1;
         running_process->cycles -= 1;
         running_process->running_time +=1;
-        
-        if (queueslist[q_index]->quantum == running_process->running_time)
-        {
-            running_process->status = 1;
-            decrease_queue(running_process);
-            running_process = NULL;
-        }
-        if (running_process->wait == running_process->running_time)
-        {
-            running_process->status = 2;
-            increase_queue(running_process);
-            running_process = NULL;
-        }
-
+        printf("Revisando proceso %i, ticks %i\n", running_process->pid, ticks);
         if (running_process->cycles == 0)
         {
             running_process->status = 3;
             pop_process(running_process);
             running_process = NULL;
         }
+
+//       if (queueslist[q_index]->quantum == running_process->running_time)
+//       {
+//           running_process->status = 1;
+//           decrease_queue(running_process);
+//           running_process = NULL;
+//       }
+//       if (running_process->wait == running_process->running_time)
+//       {
+//           running_process->status = 2;
+//           increase_queue(running_process);
+//           running_process = NULL;
+//       }
+
+
 
 
     }
@@ -213,20 +215,18 @@ void free_mem()
 void finish()
 {
     int cond = 0;
-    for (int i = 0;i<Q;i++)
+    for (int i = 0;i<processes_number;i++)
     {
-        Queue* queue = queueslist[i];
-        for (int j = 0;j<queue->c;j++)
+        if (processes[i]->status != 3)
         {
-            Process* process = queue->processes[j];
-            if (process->status != 3)
-            {
-                cond = 1;
-            }
+            cond +=1;
         }
     }
     if (cond == 0)
     {
         ticks = -1;
+        free_mem();
+        input_file_destroy(input_file);
+        exit(1);
     }
 }

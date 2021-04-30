@@ -42,8 +42,7 @@ int main(int argc, char **argv)
     reset_ticks += 1;
     //finish();
   }
-  free_mem();
-  input_file_destroy(input_file);
+
 }
 
 

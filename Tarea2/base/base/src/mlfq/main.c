@@ -10,9 +10,10 @@ int main(int argc, char **argv)
 {
 
   input_file = read_file(argv[1]);
-  Q = atoi(argv[2]);
-  q = atoi(argv[3]);
-  S = atoi(argv[4]);
+  output_name = argv[2];
+  Q = atoi(argv[3]);
+  q = atoi(argv[4]);
+  S = atoi(argv[5]);
   processes_number = input_file->len;
   ticks = 0;
   //Crear y llenar lista de Queues
@@ -36,7 +37,6 @@ int main(int argc, char **argv)
     ticks += 1;
     printf("%i\n\n", ticks);
     reset_ticks += 1;
-    //finish();
   }
 
 }

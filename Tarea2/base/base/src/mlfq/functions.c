@@ -18,6 +18,12 @@ Process* ProcessInit(char* name,int pid, int tiempo_inicio, int cycles, int wait
   process->tiempo_inicio = tiempo_inicio;
   process->cycles = cycles;
   process->status = 0;
+  process->chosen_times = 0;
+  process -> interruptions = 0;
+  process->turnaround_time = 0;
+  process->response_time = 0;
+  process->waiting_time = 0;
+  process->first_ejec = 0;
   return process;
 }
 
@@ -70,7 +76,7 @@ void process_to_sistem()
         processes[i]->status = 1;
         queueslist[0]->processes[last] = processes[i];
         queueslist[0]->c+=1;
-        printf("añadiendo proceso %i con status %i en ticks %i\n",queueslist[0]->processes[last]->pid,queueslist[0]->processes[last]->status, ticks );
+        printf("añadiendo proceso %s con status %i en ticks %i\n",queueslist[0]->processes[last]->name,queueslist[0]->processes[last]->status, ticks );
       }      
     }
 }
@@ -82,7 +88,7 @@ void cpu()
     waiting_processes();
     if (running_process)
     {
-        printf("corriendo proceso %i\n", running_process->pid);
+        printf("corriendo proceso %s\n", running_process->name);
         int pi = return_pi(running_process);
         int q_index = Q -pi -1;
         running_process->cycles -= 1;
@@ -90,7 +96,10 @@ void cpu()
         //printf("Revisando proceso %i, ticks %i\n", running_process->pid, ticks);
         if (running_process->cycles == 0)
         {
-            printf("terminando proceso %i en ticks %i\n", running_process->pid, ticks);
+            printf("terminando proceso %s en ticks %i\n", running_process->name, ticks);
+            running_process->turnaround_time = ticks - running_process->tiempo_inicio;
+            running_process->response_time = running_process->first_ejec - running_process->tiempo_inicio;
+            printf("calculando response%i como %i -%i\n", running_process->response_time, running_process->first_ejec,running_process->tiempo_inicio);
             running_process->status = 3;
             pop_process(running_process);
             running_process = NULL;
@@ -100,6 +109,7 @@ void cpu()
        {
            printf("proceso cediendo cpu por quantum\n");
            running_process->status = 1;
+           running_process->interruptions += 1;
            decrease_queue(running_process);
            running_process = NULL;
        }
@@ -126,12 +136,18 @@ void cpu()
             for (int j = 0; j<queue->c; j++)
             {
                 Process* process = queue->processes[j];
-                printf("revisando proceso %i, cuyo status es %i\n", process->pid, process->status);
+                printf("revisando proceso %s, cuyo status es %i\n", process->name, process->status);
                 if (process->status == 1)
                 {
                     running_process = process;
+                    if (running_process->first_ejec == 0)
+                    {
+                        running_process->first_ejec = ticks;
+                        printf("asignando al proceso %s el first ejec %i",running_process->name, ticks );
+                    }
                     process->status = 0;
-                    printf("empezando a correr %i en ticks %i \n", running_process->pid, ticks);
+                    process->chosen_times +=1;
+                    printf("empezando a correr %s en ticks %i \n", running_process->name, ticks);
                     break;
 
                 }
@@ -189,15 +205,26 @@ void waiting_processes()
 {
     for (int i = 0;i<processes_number;i++)
     {
-        if (processes[i]->status == 2)
+        if (processes[i]->status == 1)
         {
             processes[i]->waiting_time += 1;
-            if (processes[i]->waiting_time == processes[i]->waiting_delay)
+
+        }
+    }
+    for (int i = 0;i<processes_number;i++)
+    {
+        if (processes[i]->status == 2)
+        {
+            processes[i]->waited_time += 1;
+            processes[i]->waiting_time += 1;
+            if (processes[i]->waited_time == processes[i]->waiting_delay)
             {
                 processes[i]->status = 1;
+                processes[i]->waited_time = 0;
             }
         }
     }
+
 }
 
 void reset_queues()
@@ -242,6 +269,7 @@ void finish()
     if (cond == 0)
     {
         ticks = -1;
+        write_output();
         free_mem();
         input_file_destroy(input_file);
         exit(1);
@@ -254,4 +282,17 @@ void review_S()
       reset_queues();
       reset_ticks = 0;
     }
+}
+
+void write_output()
+{
+    FILE *fpt;
+    fpt = fopen(output_name, "w+");
+    for (int i = 0; i < processes_number;i++)
+    {
+        Process* process = processes[i];
+        printf("response:%i\n",process->response_time);
+        fprintf(fpt,"%s, %i, %i, %i, %i, %i\n",process->name, process->chosen_times, process->interruptions, process->turnaround_time, process->response_time, process->waiting_time);
+    }
+    free (fpt);
 }

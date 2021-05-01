@@ -14,6 +14,12 @@ typedef struct Process {
   int cycles;
   char* name;
   int running_time;
+  int waited_time;
+  int chosen_times;
+  int interruptions;
+  int turnaround_time;
+  int response_time;
+  int first_ejec;
   int waiting_time;
 } Process;
 
@@ -26,6 +32,7 @@ typedef struct Queue{
 
 InputFile* input_file;
 Queue** queueslist;
+char* output_name;
 int Q ;
 int q ;
 int S ;
@@ -51,5 +58,6 @@ void reset_queues();
 void free_mem();
 void finish();
 void review_S();
+void write_output();
 
 

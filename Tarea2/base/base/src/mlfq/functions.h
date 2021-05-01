@@ -41,6 +41,7 @@ int ticks;
 int reset_ticks;
 Process** processes;
 Process* running_process;
+FILE *fpt;
 
 
 Process* ProcessInit(char* name,int pid, int tiempo_inicio, int cycles, int wait, int waiting_delay);

@@ -286,7 +286,6 @@ void review_S()
 
 void write_output()
 {
-    FILE *fpt;
     fpt = fopen(output_name, "w+");
     for (int i = 0; i < processes_number;i++)
     {
@@ -294,5 +293,5 @@ void write_output()
         printf("response:%i\n",process->response_time);
         fprintf(fpt,"%s, %i, %i, %i, %i, %i\n",process->name, process->chosen_times, process->interruptions, process->turnaround_time, process->response_time, process->waiting_time);
     }
-    free (fpt);
+    fclose(fpt);
 }
